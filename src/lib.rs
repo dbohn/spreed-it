@@ -59,8 +59,9 @@ impl Universe {
                     thickness: 10.0
                 };
 
-            loop {
-                let mut collision_counter = humans.len();
+            let mut collision_counter = humans.len();
+            while collision_counter != 0 {
+                collision_counter = humans.len();
                 for i in 0..humans.len() {
                     if human.collide(&humans[i]) {
                         human.pos.x =  15.0 + js_sys::Math::random() * (width - 30.0);
@@ -68,9 +69,6 @@ impl Universe {
                     } else {
                         collision_counter -= 1;
                     }
-                }
-                if collision_counter == 0 {
-                    break;
                 }
             }
             humans.push(human);
