@@ -6,7 +6,7 @@ import "./app.css";
 
 const width = 800;
 const height = 600;
-const universe = Universe.new(width, height, 200);
+const universe = Universe.new(width, height, 100);
 
 const canvas = document.getElementById("spreed-it-canvas");
 canvas.height = height;
