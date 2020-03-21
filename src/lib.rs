@@ -43,18 +43,18 @@ pub struct Universe {
 impl Universe {
     pub fn new(width: f64, height: f64, humans: u32) -> Universe {
         let humans = (0..humans).map(|_i| {
-            Human {
-                pos: Vector {
-                    x: 15.0 + js_sys::Math::random() * (width - 30.0),
-                    y: 15.0 + js_sys::Math::random() * (height - 30.0),
+            Human::new(
+                Vector {
+                    x: 15.0 + utils::rand() * (width - 30.0),
+                    y: 15.0 + utils::rand() * (height - 30.0),
                 },
-                velocity: Vector::normalize(
-                    js_sys::Math::random() * 2.0 - 1.0,
-                    js_sys::Math::random() * 2.0 - 1.0,
+                Vector::normalize(
+                    utils::rand() * 2.0 - 1.0,
+                    utils::rand() * 2.0 - 1.0,
                 ),
-                health: if _i == 0 { Health::Infected } else { Health::Susceptible },
-                thickness: 10.0
-            }
+                if _i == 0 { Health::Infected } else { Health::Susceptible },
+                10.0
+            )
         })
         .collect();
 
@@ -120,7 +120,7 @@ impl Universe {
                     let mut human_j = humans[j].clone();
                     human_i.bounce(&mut human_j);
 
-                    human_i.infect(&mut human_j);
+                    human_i.infect(&mut human_j, self.ticks);
 
                     humans[i] = human_i;
                     humans[j] = human_j;
@@ -128,6 +128,7 @@ impl Universe {
             }
 
             humans[i].bounce_edge(self.width, self.height);
+            humans[i].recover_or_die(self.ticks);
         }
 
         self.humans = humans;
