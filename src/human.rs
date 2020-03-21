@@ -127,17 +127,21 @@ impl Human {
     }
 
     pub fn recover_or_die(&mut self, now: u128) {
-        // We have a maximum infect length of 14 days
+        // We have a maximum infect length of 14 seconds
         // during this time, we have an increasing probability of recover
         if !self.is_infected() {
             return;
         }
 
+        let threshold_probability = 0.5;
+        let halftime = 12.0;
+
         let seconds = (now as f64) / 60.0;
 
-        let coefficient = seconds * 0.5 - 7.0;
+        // After 12 seconds we reach 50% probability. It will take 10 seconds to at least spread a bit
+        let coefficient = seconds - halftime;
 
-        if utils::rand() < coefficient.tanh() * 0.5 + 0.5 {
+        if utils::rand() < coefficient.tanh() * threshold_probability + threshold_probability {
             self.health = Health::Removed;
         }
     }
