@@ -105,16 +105,12 @@ impl Human {
 
     pub fn infect(&mut self, other: &mut Human, now: u128) {
 
-        if self.health == Health::Removed {
-            return
-        }
-
-        if self.health == Health::Infected {
+        if self.health == Health::Infected && other.health != Health::Removed {
             other.health = Health::Infected;
             other.infected_at = now;
         }
 
-        if other.health == Health::Infected {
+        if other.health == Health::Infected && self.health != Health::Removed {
             self.health = Health::Infected;
             self.infected_at = now;
         }
@@ -139,7 +135,7 @@ impl Human {
 
         let seconds = (now as f64) / 60.0;
 
-        let coefficient = seconds * 0.5 - 12.0;
+        let coefficient = seconds * 0.5 - 7.0;
 
         if utils::rand() < coefficient.tanh() * 0.5 + 0.5 {
             self.health = Health::Removed;

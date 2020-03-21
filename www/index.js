@@ -2,7 +2,7 @@ import { Universe } from "spreed-it";
 
 const width = 800;
 const height = 600;
-const universe = Universe.new(width, height, 20);
+const universe = Universe.new(width, height, 100);
 
 const canvas = document.getElementById("spreed-it-canvas");
 canvas.height = height;
