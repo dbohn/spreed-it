@@ -120,7 +120,7 @@ impl Universe {
     }
 
     pub fn died(&self) -> usize {
-        0
+        self.humans.iter().filter(|h| h.health == Health::Died).count()
     }
 
     pub fn render(&self, ctx: &CanvasRenderingContext2d) {
@@ -130,9 +130,9 @@ impl Universe {
             ctx.begin_path();
             ctx.set_fill_style(&
                 match human.health {
-                    Health::Susceptible => JsValue::from_str("#00ff00"),
-                    Health::Infected => JsValue::from_str("#ff0000"),
-                    Health::Removed => JsValue::from_str("#0000ff"),
+                    Health::Susceptible => JsValue::from_str("#68d391"),
+                    Health::Infected => JsValue::from_str("#e53e3e"),
+                    Health::Removed => JsValue::from_str("#63b3ed"),
                     Health::Died => JsValue::from_str("rgba(0,0,0,.1)"),
                 });
             ctx
