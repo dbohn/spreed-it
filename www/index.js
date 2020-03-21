@@ -1,8 +1,8 @@
 import { Universe } from "spreed-it";
 
-const width = 64 * 6 + 1;
-const height = 64 * 6 + 1;
-const universe = Universe.new(width, height);
+const width = 800;
+const height = 600;
+const universe = Universe.new(width, height, 20);
 
 const canvas = document.getElementById("spreed-it-canvas");
 canvas.height = height;
