@@ -42,7 +42,7 @@ pub struct Universe {
 #[wasm_bindgen]
 impl Universe {
     pub fn new(width: f64, height: f64, humans: u32) -> Universe {
-        let humans = (0..humans).map(|_i| {
+        let mut humans : Vec<Human> = (0..humans).map(|_i| {
             Human {
                 pos: Vector {
                     x: 15.0 + js_sys::Math::random() * (width - 30.0),
@@ -57,6 +57,21 @@ impl Universe {
             }
         })
         .collect();
+
+        let mut humans_clone : Vec<Human> = humans.clone();
+
+        for i in 0..humans_clone.len() {
+            for j in (i+1)..humans_clone.len() {
+                if humans_clone[i].collide(&humans_clone[j]) {
+                    let mut human_j = humans_clone[j].clone();
+                    human_j.pos.x =  15.0 + js_sys::Math::random() * (width - 30.0);
+                    human_j.pos.y = 15.0 + js_sys::Math::random() * (height - 30.0);
+                    humans_clone[j] = human_j;
+                }
+            }
+        }
+
+        humans = humans_clone;
 
         /*let humans = (0..2).map(|_i| {
             console_log!("X: {}, Velocity: {}", width * (_i as f64), if _i == 0 { 1.0 } else { -1.0 });
