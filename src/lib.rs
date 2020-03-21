@@ -107,6 +107,22 @@ impl Universe {
         self.height
     }
 
+    pub fn susceptible(&self) -> usize {
+        self.humans.iter().filter(|h| h.health == Health::Susceptible).count()
+    }
+
+    pub fn infected(&self) -> usize {
+        self.humans.iter().filter(|h| h.health == Health::Infected).count()
+    }
+
+    pub fn removed(&self) -> usize {
+        self.humans.iter().filter(|h| h.health == Health::Removed).count()
+    }
+
+    pub fn died(&self) -> usize {
+        0
+    }
+
     pub fn render(&self, ctx: &CanvasRenderingContext2d) {
         ctx.clear_rect(0.0, 0.0, self.width.into(), self.height.into());
 
