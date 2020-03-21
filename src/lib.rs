@@ -42,8 +42,10 @@ pub struct Universe {
 #[wasm_bindgen]
 impl Universe {
     pub fn new(width: f64, height: f64, humans: u32) -> Universe {
-        let humans = (0..humans).map(|_i| {
-            Human::new(
+        let mut humans : Vec<Human> = Vec::with_capacity(humans as usize);
+
+        while humans.len() < humans.capacity() {
+            let mut human = Human::new(
                 Vector {
                     x: 15.0 + utils::rand() * (width - 30.0),
                     y: 15.0 + utils::rand() * (height - 30.0),
@@ -52,11 +54,25 @@ impl Universe {
                     utils::rand() * 2.0 - 1.0,
                     utils::rand() * 2.0 - 1.0,
                 ),
-                if _i == 0 { Health::Infected } else { Health::Susceptible },
+                if humans.len() == 0 { Health::Infected } else { Health::Susceptible },
                 10.0
-            )
-        })
-        .collect();
+            );
+
+            // Prevent overlapping in initial configuration
+            let mut collision_counter = humans.len();
+            while collision_counter != 0 {
+                collision_counter = humans.len();
+                for i in 0..humans.len() {
+                    if human.collide(&humans[i]) {
+                        human.pos.x =  15.0 + utils::rand() * (width - 30.0);
+                        human.pos.y = 15.0 + utils::rand() * (height - 30.0);
+                    } else {
+                        collision_counter -= 1;
+                    }
+                }
+            }
+            humans.push(human);
+        }
 
         /*let humans = (0..2).map(|_i| {
             console_log!("X: {}, Velocity: {}", width * (_i as f64), if _i == 0 { 1.0 } else { -1.0 });
