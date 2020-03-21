@@ -116,7 +116,8 @@ impl Universe {
                 match human.health {
                     Health::Susceptible => JsValue::from_str("#00ff00"),
                     Health::Infected => JsValue::from_str("#ff0000"),
-                    Health::Removed => JsValue::from_str("#0000ff")
+                    Health::Removed => JsValue::from_str("#0000ff"),
+                    Health::Died => JsValue::from_str("rgba(0,0,0,.1)"),
                 });
             ctx
                 .arc(human.pos.x, human.pos.y, human.thickness, 0.0, std::f64::consts::PI * 2.0)

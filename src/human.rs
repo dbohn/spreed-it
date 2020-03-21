@@ -9,6 +9,7 @@ pub enum Health {
     Susceptible = 0,
     Infected = 1,
     Removed = 2,
+    Died = 3,
 }
 
 #[wasm_bindgen]
@@ -84,10 +85,12 @@ impl Human {
         }
     }
 
+    /// Check, if this human collides with the given other human
     pub fn collide(&self, other: &Human) -> bool {
-        (self.pos.x - other.pos.x).powi(2) + (self.pos.y - other.pos.y).powi(2) <= (self.thickness + other.thickness).powi(2)
+        !self.is_dead() && !other.is_dead() && (self.pos.x - other.pos.x).powi(2) + (self.pos.y - other.pos.y).powi(2) <= (self.thickness + other.thickness).powi(2)
     }
 
+    /// Calculate new velocity of collision between two humans
     pub fn bounce(&mut self, other: &mut Human) {
         let tangent_vector = Vector::normalize(self.pos.y - other.pos.y, -(self.pos.x - other.pos.x));
 
@@ -105,12 +108,12 @@ impl Human {
 
     pub fn infect(&mut self, other: &mut Human, now: u128) {
 
-        if self.health == Health::Infected && other.health != Health::Removed {
+        if self.health == Health::Infected && other.is_infectable() {
             other.health = Health::Infected;
             other.infected_at = now;
         }
 
-        if other.health == Health::Infected && self.health != Health::Removed {
+        if other.health == Health::Infected && self.is_infectable() {
             self.health = Health::Infected;
             self.infected_at = now;
         }
@@ -136,17 +139,36 @@ impl Human {
         let threshold_probability = 0.5;
         let halftime = 12.0;
 
+        let probability_to_recover = 0.92;
+
         let seconds = (now as f64) / 60.0;
 
         // After 12 seconds we reach 50% probability. It will take 10 seconds to at least spread a bit
         let coefficient = seconds - halftime;
 
         if utils::rand() < coefficient.tanh() * threshold_probability + threshold_probability {
-            self.health = Health::Removed;
+            if utils::rand() <= probability_to_recover {
+                self.health = Health::Removed;
+            } else {
+                self.health = Health::Died;
+                // If we are dead, we cannot move anymore!
+                self.velocity = Vector {
+                    x: 0.0,
+                    y: 0.0,
+                }
+            }
         }
     }
 
     pub fn is_infected(&self) -> bool {
         self.health == Health::Infected
+    }
+
+    pub fn is_infectable(&self) -> bool {
+        self.health != Health::Removed && self.health != Health::Died
+    }
+
+    pub fn is_dead(&self) -> bool {
+        self.health == Health::Died
     }
 }
