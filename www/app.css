@@ -14,3 +14,22 @@ canvas {
     border: 1px solid #CCCCCC;
     width: 100%;
 }
+.ct-series .ct-area {
+    fill-opacity: 1;
+}
+
+.ct-series-a .ct-area {
+    fill: #68d391;
+}
+
+.ct-series-b .ct-area {
+    fill: #e53e3e;
+}
+
+.ct-series-c .ct-area {
+    fill: #63b3ed;
+}
+
+.ct-series-d .ct-area {
+    fill: #e2e8f0;
+}
