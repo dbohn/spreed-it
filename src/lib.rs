@@ -1,11 +1,13 @@
 mod utils;
 mod human;
+mod zone;
 
 use wasm_bindgen::prelude::*;
 
 use web_sys::{CanvasRenderingContext2d};
 
 use human::{Human, Vector, Health};
+use zone::{Zone};
 
 use std::f64;
 
@@ -37,11 +39,25 @@ pub struct Universe {
     height: f64,
     humans: Vec<Human>,
     ticks: u128,
+    quarantine : Zone,
 }
 
 #[wasm_bindgen]
 impl Universe {
     pub fn new(width: f64, height: f64, humans: u32) -> Universe {
+
+        let quarantine = Zone {
+            x1: 100.0,
+            x2: 102.0,
+        /*
+            top_left_corner: Vector {
+                x: 10.0,
+                y: 10.0,
+            },
+            width: 200.0,
+            height: 200.0,
+        */
+        };
 
         let mut humans : Vec<Human> = Vec::with_capacity(humans as usize);
 
@@ -73,28 +89,29 @@ impl Universe {
             }
             humans.push(human);
         }
-
-        /*let humans = (0..2).map(|_i| {
+/*
+        let humans = (0..1).map(|_i| {
             console_log!("X: {}, Velocity: {}", width * (_i as f64), if _i == 0 { 1.0 } else { -1.0 });
             Human {
                 pos: Vector {
-                    x: 15.0 + (width - 30.0) * (_i as f64),
-                    y: height / 2.0,
+                    x: 10.0,
+                    y: 10.0,
                 },
                 velocity: Vector::normalize(
-                    if _i == 0 { 1.0 } else { -1.0 },
-                    0.0,
+                    1.0,
+                    1.0,
                 ),
                 health: Health::Susceptible,
                 thickness: 10.0
             }
         })
-        .collect();*/
-
+        .collect();
+*/
         Universe {
             width,
             height,
             humans,
+            quarantine,
             ticks: 0
         }
     }
@@ -110,14 +127,30 @@ impl Universe {
     pub fn render(&self, ctx: &CanvasRenderingContext2d) {
         ctx.clear_rect(0.0, 0.0, self.width.into(), self.height.into());
 
+        let mut q = self.quarantine.clone();
+
+        ctx.begin_path();
+        ctx.move_to(q.x1, 0.0);
+        ctx.line_to(q.x1, self.height);
+        ctx.stroke();
+        ctx.move_to(q.x2, 0.0);
+        ctx.line_to(q.x2, self.height);
+        ctx.stroke();
+        //ctx.rect(q.top_left_corner.x, q.top_left_corner.y, q.width, q.height);
+
+
         for human in self.humans.iter() {
             ctx.begin_path();
+           /* if q.inside(human) {
+            ctx.set_fill_style(&mut JsValue::from_str("#00ffff"));
+            } else {*/
             ctx.set_fill_style(&
                 match human.health {
                     Health::Susceptible => JsValue::from_str("#00ff00"),
                     Health::Infected => JsValue::from_str("#ff0000"),
                     Health::Removed => JsValue::from_str("#0000ff")
                 });
+            //}
             ctx
                 .arc(human.pos.x, human.pos.y, human.thickness, 0.0, std::f64::consts::PI * 2.0)
                 .unwrap();
@@ -143,7 +176,11 @@ impl Universe {
                 }
             }
 
-            humans[i].bounce_edge(self.width, self.height);
+            if self.quarantine.inside(&humans[i]) {
+                humans[i].bounce_edge(0.0, self.quarantine.x1, 0.0, self.height);
+            } else {
+                humans[i].bounce_edge(self.quarantine.x2, self.width, 0.0, self.height);
+            }
         }
 
         self.humans = humans;

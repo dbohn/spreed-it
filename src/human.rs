@@ -99,13 +99,31 @@ impl Human {
         }
     }
 
-    pub fn bounce_edge(&mut self, width: f64, height: f64) {
-        if self.pos.x - self.thickness <= 0.0 || self.pos.x + self.thickness >= width {
-                self.velocity.x *= -1.0;
-            }
+    pub fn bounce_edge(&mut self, lower_x: f64, upper_x: f64, lower_y: f64, upper_y: f64) {
 
-            if self.pos.y - self.thickness <= 0.0 || self.pos.y + self.thickness >= height {
-                self.velocity.y *= -1.0;
-            }
+        /* push human back into the allowed area if necessary */
+        if self.pos.x - self.thickness < lower_x {
+            self.pos.x = lower_x + self.thickness;
+        }
+
+        if self.pos.x + self.thickness > upper_x {
+            self.pos.x = upper_x - self.thickness;
+        }
+
+        if self.pos.y - self.thickness < lower_y {
+            self.pos.y = lower_y + self.thickness;
+        }
+
+        if self.pos.y + self.thickness > upper_y {
+            self.pos.y = upper_y - self.thickness;
+        }
+
+        if self.pos.x - self.thickness <= lower_x || self.pos.x + self.thickness >= upper_x {
+            self.velocity.x *= -1.0;
+        }
+
+        if self.pos.y - self.thickness <= lower_y || self.pos.y + self.thickness >= upper_y {
+            self.velocity.y *= -1.0;
+        }
     }
 }
