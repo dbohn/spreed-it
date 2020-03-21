@@ -1,5 +1,7 @@
 # Spreed it!
 
+![Logo](www/images/logo.png)
+
 ## Install
 
 1. Install [rustup](https://rustup.rs) to get the latest rust toolchain.
