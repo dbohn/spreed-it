@@ -15,24 +15,36 @@
       <a href="https://github.com/dbohn/spreed-it" target="_blank">GitHub</a>
     </div>
   </nav>
-  <div class="bg-white max-w-5xl w-full m-auto p-4 shadow mb-4">
+  <main class="bg-white max-w-5xl w-full m-auto p-4 relative">
+    <div id="restart-overlay" class="absolute bg-black-50 inset-0 flex items-center justify-center z-50 hidden fade-in">
+      <span
+        class="text-white transform rotate-full cursor-default rounded-full bg-black block w-12 h-12 flex items-center justify-center">↻</span>
+    </div>
     <div class="flex">
-      <div class="flex-inline w-1/6 text-sm mt-3">
+      <div class="flex-inline w-1/6 text-sm">
         <div class="whitespace-no-wrap border-dotted border-b-2 border-gray-400 flex items-center justify-between">
           <span class="mr-4 text-gray-700">Susceptible:</span>
-          <span class="bg-green-400 text-green-900 font-semibold h-4 leading-none rounded-sm text-center px-1 text-xs flex items-center justify-center" id="susceptible-count">0</span>
+          <span
+            class="bg-green-400 text-green-900 font-semibold h-4 leading-none rounded-sm text-center px-1 text-xs flex items-center justify-center"
+            id="susceptible-count">0</span>
         </div>
         <div class="whitespace-no-wrap border-dotted border-b-2 border-gray-400 flex items-center justify-between">
           <span class="mr-4 text-gray-700">Infected:</span>
-          <span class="bg-red-600 text-red-100 font-semibold h-4 leading-none rounded-sm text-center px-1 text-xs flex items-center justify-center" id="infected-count">0</span>
+          <span
+            class="bg-red-600 text-red-100 font-semibold h-4 leading-none rounded-sm text-center px-1 text-xs flex items-center justify-center"
+            id="infected-count">0</span>
         </div>
         <div class="whitespace-no-wrap border-dotted border-b-2 border-gray-400 flex items-center justify-between">
           <span class="mr-4 text-gray-700">Removed:</span>
-          <span class="bg-blue-400 text-blue-100 font-semibold h-4 leading-none rounded-sm text-center px-1 text-xs flex items-center justify-center" id="removed-count">0</span>
+          <span
+            class="bg-blue-400 text-blue-100 font-semibold h-4 leading-none rounded-sm text-center px-1 text-xs flex items-center justify-center"
+            id="removed-count">0</span>
         </div>
         <div class="whitespace-no-wrap flex items-center justify-between">
           <span class="mr-4 text-gray-700">Died:</span>
-          <span class="bg-gray-300 text-gray-900 font-semibold h-4 leading-none rounded-sm text-center px-1 text-xs flex items-center justify-center" id="died-count">0</span>
+          <span
+            class="bg-gray-300 text-gray-900 font-semibold h-4 leading-none rounded-sm text-center px-1 text-xs flex items-center justify-center"
+            id="died-count">0</span>
         </div>
       </div>
       <div id="chart" class="ct-chart ct-golden-section h-32"></div>
@@ -61,21 +73,23 @@
         </div>
       </div>
       <div class="mb-1 flex items-center text-sm">
-        <button class="bg-gray-200 hover:bg-gray-400 rounded text-gray-800 flex items-center font-semibold py-1 px-2" id="trigger-button">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button class="bg-gray-200 hover:bg-gray-400 rounded text-gray-800 flex items-center font-semibold py-1 px-2"
+          id="trigger-button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg> Simulation starten
         </button>
       </div>
       <div class="relative">
-        <div class="absolute inset-0 flex items-center justify-center" id="overlay" style="background-color: rgba(255,255,255,0.8)">
+        <div class="absolute inset-0 flex items-center justify-center" id="overlay"
+          style="background-color: rgba(255,255,255,0.8)">
           Simulation über Play-Button starten
         </div>
         <canvas id="spreed-it-canvas"></canvas>
       </div>
     </div>
-  </div>
+  </main>
   <script src="./bootstrap.js"></script>
 </body>
 

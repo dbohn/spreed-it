@@ -54,7 +54,7 @@ impl Universe {
     pub fn new(width: f64, height: f64, humans: u32) -> Universe {
         let age_group = AgeGroup {
             size: humans as usize,
-            activity: 0.1,
+            activity: 1.0,
             vulnerability: 1.0,
         };
 
@@ -138,9 +138,9 @@ impl Universe {
             ctx.begin_path();
             ctx.set_fill_style(&
                 match human.health {
-                    Health::Susceptible => JsValue::from_str("#00ff00"),
-                    Health::Infected => JsValue::from_str("#ff0000"),
-                    Health::Removed => JsValue::from_str("#0000ff"),
+                    Health::Susceptible => JsValue::from_str("#68d391"),
+                    Health::Infected => JsValue::from_str("#e53e3e"),
+                    Health::Removed => JsValue::from_str("#63b3ed"),
                     Health::Died => JsValue::from_str("rgba(0,0,0,.1)"),
                 });
             ctx
