@@ -24,10 +24,15 @@ const stats = healthStatus.reduce((base, key) => {
 const chart = new Chartist.Line("#chart", {
     series: [[], [], []]
 }, {
-    high: 100,
     showPoint: false,
     showArea: true,
     showLine: false,
+    chartPadding: {
+        top: 0,
+        right: 0,
+        left: 0,
+        bottom: 0
+    },
     axisX: {
         showGrid: false,
         showLabel: false
@@ -64,6 +69,9 @@ const renderLoop = () => {
         if (status === "infected" && val === 0 && chartUpdateInterval) {
             window.clearInterval(chartUpdateInterval);
             chartUpdateInterval = null;
+            setTimeout(() => {
+                document.querySelector("#restart-overlay").classList.remove("hidden");
+            }, 1000);
         }
         const series = stats[status].series;
         stats[status].el.textContent = val;
