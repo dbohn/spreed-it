@@ -1,5 +1,6 @@
-import { Universe } from "spreed-it";
+import { Universe, AgeGroup } from "spreed-it";
 import Chartist from "chartist";
+import Vue from "vue";
 
 import "chartist/dist/chartist.min.css";
 import "./app.css";
@@ -47,8 +48,7 @@ const getSeries = () => {
 };
 
 class App {
-    constructor(canvas, width, height) {
-        this.canvas = canvas;
+    constructor(width, height) {
         this.width = width;
         this.height = height;
         this.universe = null;
@@ -56,15 +56,10 @@ class App {
         this.rendering = false;
     }
 
-    init() {
+    init(canvas) {
+        this.canvas = canvas;
         this.canvas.width = this.width;
         this.canvas.height = this.height;
-
-        document.querySelectorAll("#trigger-button, #overlay").forEach((item) => {
-            item.addEventListener('click', () => {
-                this.run();
-            });
-        });
     }
 
     getContext() {
@@ -75,9 +70,13 @@ class App {
         return this.ctx;
     }
 
-    run() {
+    run(ageGroups) {
         document.querySelector("#overlay").classList.add("hidden");
-        this.universe = Universe.new(this.width, this.height, 100);
+        this.universe = Universe.new(this.width, this.height, 0);
+
+        ageGroups.forEach((ageGroup) => {
+            this.universe.spawn_age_group(ageGroup);
+        });
 
         this.initChart();
 
@@ -124,5 +123,69 @@ class App {
 }
 
 
-const app = new App(document.getElementById("spreed-it-canvas"), 800, 600);
-app.init();
+const app = new App(800, 600);
+
+const vue = new Vue({
+    el: '#app',
+    data: {
+        ageGroups: [
+            {
+                label: '< 18 Jahre',
+                config: {
+                    size: 10,
+                    activity: 1.1,
+                    vulnerability: 0.9,
+                    letality: 0.01,
+                }
+            },
+            {
+                label: '18 - 24 Jahre',
+                config: {
+                    size: 10,
+                    activity: 1.1,
+                    vulnerability: 0.9,
+                    letality: 0.01,
+                }
+            },
+            {
+                label: '25 - 40 Jahre',
+                config: {
+                    size: 10,
+                    activity: 1.1,
+                    vulnerability: 0.9,
+                    letality: 0.01,
+                }
+            },
+            {
+                label: '41 - 64 Jahre',
+                config: {
+                    size: 10,
+                    activity: 1.1,
+                    vulnerability: 0.9,
+                    letality: 0.01,
+                }
+            },
+            {
+                label: '≥ 65 Jahre',
+                config: {
+                    size: 10,
+                    activity: 0.7,
+                    vulnerability: 1.0,
+                    letality: 0.1,
+                }
+            }
+        ]
+    },
+
+    mounted() {
+        app.init(this.$refs.canvas);
+    },
+
+    methods: {
+        run() {
+            app.run(
+                this.ageGroups.map(({config}) => AgeGroup.new(config.size, config.activity, config.vulnerability, config.letality))
+            );
+        }
+    }
+});

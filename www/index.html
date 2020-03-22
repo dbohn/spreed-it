@@ -15,7 +15,7 @@
       <a href="https://github.com/dbohn/spreed-it" target="_blank">GitHub</a>
     </div>
   </nav>
-  <main class="bg-white max-w-5xl w-full m-auto p-4 relative">
+  <main class="bg-white max-w-5xl w-full m-auto p-4 relative mb-4 shadow">
     <div class="flex">
       <div class="flex-inline w-1/6 text-sm">
         <div class="whitespace-no-wrap border-dotted border-b-2 border-gray-400 flex items-center justify-between">
@@ -45,33 +45,35 @@
       </div>
       <div id="chart" class="ct-chart ct-golden-section h-32"></div>
     </div>
-    <div class="mx-auto max-w-3xl">
+    <div class="mx-auto max-w-3xl" id="app">
       <!-- Coming soon -->
-      <!--<div class="flex items-center text-sm flex-wrap">
-        <div class="flex items-center mb-1 w-1/3">
-          <label for="">&lt; 18 Jahre:</label>
-          <input class="border p-1 rounded-sm ml-1" type="text">
+      <div class="text-sm">
+
+        <div class="mb-1" v-for="group in ageGroups">
+          <h4 class="font-semibold">{{ group.label }}:</h4>
+          <div class="flex">
+            <div class="flex flex-col">
+              <label for="">Anzahl</label>
+              <input class="border p-1 rounded-sm ml-1" type="text" v-model="group.config.size">
+            </div>
+            <div class="flex flex-col">
+              <label for="">Aktivität</label>
+              <input type="text" class="border p-1 rounded-sm ml-1" v-model="group.config.activity">
+            </div>
+            <div class="flex flex-col">
+              <label for="">Anfälligkeit</label>
+              <input type="text" class="border p-1 rounded-sm ml-1" v-model="group.config.vulnerability">
+            </div>
+            <div class="flex flex-col">
+              <label for="">Letalität</label>
+              <input type="text" class="border p-1 rounded-sm ml-1" v-model="group.config.letality">
+            </div>
+          </div>
         </div>
-        <div class="flex items-center mb-1 w-1/3">
-          <label for="">18 - 24 Jahre:</label>
-          <input class="border p-1 rounded-sm ml-1" type="text">
-        </div>
-        <div class="flex items-center mb-1 w-1/3">
-          <label for="">25 - 40 Jahre:</label>
-          <input class="border p-1 rounded-sm ml-1" type="text">
-        </div>
-        <div class="flex items-center mb-1 w-1/3">
-          <label for="">40 - 64 Jahre:</label>
-          <input class="border p-1 rounded-sm ml-1" type="text">
-        </div>
-        <div class="flex items-center mb-1 w-1/3">
-          <label for="">&ge; 65 Jahre:</label>
-          <input class="border p-1 rounded-sm ml-1" type="text">
-        </div>
-      </div>-->
+      </div>
       <div class="mb-1 flex items-center text-sm">
         <button class="bg-gray-200 hover:bg-gray-400 rounded text-gray-800 flex items-center font-semibold py-1 px-2"
-          id="trigger-button">
+          id="trigger-button" @click.prevent="run">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -79,14 +81,14 @@
         </button>
       </div>
       <div class="relative">
-        <div class="absolute inset-0 flex items-center justify-center fade-in cursor-pointer" id="overlay"
+        <div class="absolute inset-0 flex items-center justify-center fade-in cursor-pointer" @click.prevent="run" id="overlay"
           style="background-color: rgba(255,255,255,0.8)">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg> Simulation starten
         </div>
-        <canvas id="spreed-it-canvas"></canvas>
+        <canvas id="spreed-it-canvas" ref="canvas"></canvas>
       </div>
     </div>
   </main>

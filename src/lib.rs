@@ -51,6 +51,18 @@ pub struct AgeGroup {
     letality: f64,
 }
 
+#[wasm_bindgen]
+impl AgeGroup {
+    pub fn new(size: usize, activity: f64, vulnerability: f64, letality: f64) -> AgeGroup {
+        AgeGroup {
+            size,
+            activity,
+            vulnerability,
+            letality
+        }
+    }
+}
+
 impl AgeGroup {
     pub fn spawn(&self, pos: Vector, health: Health) -> Human {
         Human::new(

@@ -21,4 +21,9 @@ module.exports = {
         new MiniCssExtractPlugin(),
         new CopyWebpackPlugin(['index.html'])
     ],
+    resolve: {
+        alias: {
+            'vue$': 'vue/dist/vue.esm.js'
+        }
+    }
 };
