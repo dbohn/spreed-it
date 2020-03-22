@@ -40,22 +40,65 @@ pub struct Universe {
 }
 
 #[wasm_bindgen]
+pub struct AgeGroup {
+    /// How many humans should be in this age group?
+    size: usize,
+    /// How fast should the humans in this group move?
+    activity: f64,
+    /// How large is the probability to infect in this age group?
+    vulnerability: f64,
+    /// How large is the probability, that people of this group will die?
+    letality: f64,
+}
+
+impl AgeGroup {
+    pub fn spawn(&self, pos: Vector, health: Health) -> Human {
+        Human::new(
+            pos,
+            Vector::normalize(
+                utils::rand() * 2.0 - 1.0,
+                utils::rand() * 2.0 - 1.0,
+            ).scale(self.activity),
+            health,
+            7.0,
+            self.vulnerability,
+            self.letality,
+        )
+    }
+}
+
+#[wasm_bindgen]
 impl Universe {
     pub fn new(width: f64, height: f64, humans: u32) -> Universe {
-        let mut humans : Vec<Human> = Vec::with_capacity(humans as usize);
+        let age_group = AgeGroup {
+            size: humans as usize,
+            activity: 1.0,
+            vulnerability: 1.0,
+            letality: 0.08,
+        };
+
+        let mut universe = Universe {
+            width,
+            height,
+            humans: Vec::new(),
+            ticks: 0
+        };
+
+        universe.spawn_age_group(&age_group);
+
+        universe
+    }
+
+    pub fn spawn_age_group(&mut self, age_group: &AgeGroup) {
+        let mut humans : Vec<Human> = Vec::with_capacity(age_group.size);
 
         while humans.len() < humans.capacity() {
-            let mut human = Human::new(
+            let mut human = age_group.spawn(
                 Vector {
-                    x: 15.0 + utils::rand() * (width - 30.0),
-                    y: 15.0 + utils::rand() * (height - 30.0),
+                    x: 15.0 + utils::rand() * (self.width - 30.0),
+                    y: 15.0 + utils::rand() * (self.height - 30.0),
                 },
-                Vector::normalize(
-                    utils::rand() * 2.0 - 1.0,
-                    utils::rand() * 2.0 - 1.0,
-                ),
-                if humans.len() == 0 { Health::Infected } else { Health::Susceptible },
-                10.0
+                if humans.len() == 0 { Health::Infected } else { Health::Susceptible }
             );
 
             // Prevent overlapping in initial configuration
@@ -64,8 +107,8 @@ impl Universe {
                 collision_counter = humans.len();
                 for i in 0..humans.len() {
                     if human.collide(&humans[i]) {
-                        human.pos.x =  15.0 + utils::rand() * (width - 30.0);
-                        human.pos.y = 15.0 + utils::rand() * (height - 30.0);
+                        human.pos.x = 15.0 + utils::rand() * (self.width - 30.0);
+                        human.pos.y = 15.0 + utils::rand() * (self.height - 30.0);
                     } else {
                         collision_counter -= 1;
                     }
@@ -74,29 +117,7 @@ impl Universe {
             humans.push(human);
         }
 
-        /*let humans = (0..2).map(|_i| {
-            console_log!("X: {}, Velocity: {}", width * (_i as f64), if _i == 0 { 1.0 } else { -1.0 });
-            Human {
-                pos: Vector {
-                    x: 15.0 + (width - 30.0) * (_i as f64),
-                    y: height / 2.0,
-                },
-                velocity: Vector::normalize(
-                    if _i == 0 { 1.0 } else { -1.0 },
-                    0.0,
-                ),
-                health: Health::Susceptible,
-                thickness: 10.0
-            }
-        })
-        .collect();*/
-
-        Universe {
-            width,
-            height,
-            humans,
-            ticks: 0
-        }
+        self.humans.extend(humans.iter().cloned());
     }
 
     pub fn width(&self) -> f64 {

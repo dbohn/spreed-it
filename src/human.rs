@@ -1,9 +1,5 @@
 use crate::utils;
 
-use wasm_bindgen::prelude::*;
-
-#[wasm_bindgen]
-#[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Health {
     Susceptible = 0,
@@ -12,17 +8,21 @@ pub enum Health {
     Died = 3,
 }
 
-#[wasm_bindgen]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Human {
     pub pos: Vector,
     pub velocity: Vector,
     pub health: Health,
+    /// How thick the bubble should be
     pub thickness: f64,
+    /// Timestamp, when this human was infected
     infected_at: u128,
+    /// Probability, that this human will get infected on contact
+    vulnerability: f64,
+    /// Probability, that this human will die of infection
+    letality: f64,
 }
 
-#[wasm_bindgen]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vector {
     pub x: f64,
@@ -75,13 +75,15 @@ impl Vector {
 
 impl Human {
 
-    pub fn new(pos: Vector, velocity: Vector, health: Health, thickness: f64) -> Human {
+    pub fn new(pos: Vector, velocity: Vector, health: Health, thickness: f64, vulnerability: f64, letality: f64) -> Human {
         Human {
             pos,
             velocity,
             health,
             thickness,
             infected_at: 0,
+            vulnerability,
+            letality
         }
     }
 
@@ -109,11 +111,16 @@ impl Human {
     pub fn infect(&mut self, other: &mut Human, now: u128) {
 
         if self.health == Health::Infected && other.is_infectable() {
-            other.health = Health::Infected;
-            other.infected_at = now;
+            other.infect_me(now);
         }
 
         if other.health == Health::Infected && self.is_infectable() {
+            self.infect_me(now);
+        }
+    }
+
+    fn infect_me(&mut self, now: u128) {
+        if utils::rand() <= self.vulnerability {
             self.health = Health::Infected;
             self.infected_at = now;
         }
@@ -137,11 +144,11 @@ impl Human {
         }
 
         let threshold_probability = 0.5;
-        let halftime = 12.0;
+        let halftime = 7.0;
 
-        let probability_to_recover = 0.92;
+        let probability_to_recover = 1.0 - self.letality;
 
-        let seconds = (now as f64) / 60.0;
+        let seconds = ((now - self.infected_at) as f64) / 60.0;
 
         // After 12 seconds we reach 50% probability. It will take 10 seconds to at least spread a bit
         let coefficient = seconds - halftime;
