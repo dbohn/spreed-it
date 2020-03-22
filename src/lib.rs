@@ -47,6 +47,24 @@ pub struct AgeGroup {
     activity: f64,
     /// How large is the probability to infect in this age group?
     vulnerability: f64,
+    /// How large is the probability, that people of this group will die?
+    letality: f64,
+}
+
+impl AgeGroup {
+    pub fn spawn(&self, pos: Vector, health: Health) -> Human {
+        Human::new(
+            pos,
+            Vector::normalize(
+                utils::rand() * 2.0 - 1.0,
+                utils::rand() * 2.0 - 1.0,
+            ).scale(self.activity),
+            health,
+            7.0,
+            self.vulnerability,
+            self.letality,
+        )
+    }
 }
 
 #[wasm_bindgen]
@@ -56,6 +74,7 @@ impl Universe {
             size: humans as usize,
             activity: 1.0,
             vulnerability: 1.0,
+            letality: 0.08,
         };
 
         let mut universe = Universe {
@@ -74,18 +93,12 @@ impl Universe {
         let mut humans : Vec<Human> = Vec::with_capacity(age_group.size);
 
         while humans.len() < humans.capacity() {
-            let mut human = Human::new(
+            let mut human = age_group.spawn(
                 Vector {
                     x: 15.0 + utils::rand() * (self.width - 30.0),
                     y: 15.0 + utils::rand() * (self.height - 30.0),
                 },
-                Vector::normalize(
-                    utils::rand() * 2.0 - 1.0,
-                    utils::rand() * 2.0 - 1.0,
-                ).scale(age_group.activity),
-                if humans.len() == 0 { Health::Infected } else { Health::Susceptible },
-                7.0,
-                age_group.vulnerability
+                if humans.len() == 0 { Health::Infected } else { Health::Susceptible }
             );
 
             // Prevent overlapping in initial configuration
@@ -94,7 +107,7 @@ impl Universe {
                 collision_counter = humans.len();
                 for i in 0..humans.len() {
                     if human.collide(&humans[i]) {
-                        human.pos.x =  15.0 + utils::rand() * (self.width - 30.0);
+                        human.pos.x = 15.0 + utils::rand() * (self.width - 30.0);
                         human.pos.y = 15.0 + utils::rand() * (self.height - 30.0);
                     } else {
                         collision_counter -= 1;

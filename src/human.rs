@@ -19,6 +19,8 @@ pub struct Human {
     infected_at: u128,
     /// Probability, that this human will get infected on contact
     vulnerability: f64,
+    /// Probability, that this human will die of infection
+    letality: f64,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -73,14 +75,15 @@ impl Vector {
 
 impl Human {
 
-    pub fn new(pos: Vector, velocity: Vector, health: Health, thickness: f64, vulnerability: f64) -> Human {
+    pub fn new(pos: Vector, velocity: Vector, health: Health, thickness: f64, vulnerability: f64, letality: f64) -> Human {
         Human {
             pos,
             velocity,
             health,
             thickness,
             infected_at: 0,
-            vulnerability
+            vulnerability,
+            letality
         }
     }
 
@@ -143,7 +146,7 @@ impl Human {
         let threshold_probability = 0.5;
         let halftime = 7.0;
 
-        let probability_to_recover = 0.92;
+        let probability_to_recover = 1.0 - self.letality;
 
         let seconds = ((now - self.infected_at) as f64) / 60.0;
 
