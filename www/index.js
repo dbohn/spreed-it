@@ -133,8 +133,8 @@ const vue = new Vue({
                 label: '< 18 Jahre',
                 config: {
                     size: 10,
-                    activity: 1.1,
-                    vulnerability: 0.9,
+                    activity: 2,
+                    vulnerability: 0.6,
                     letality: 0.01,
                 }
             },
@@ -142,8 +142,8 @@ const vue = new Vue({
                 label: '18 - 24 Jahre',
                 config: {
                     size: 10,
-                    activity: 1.1,
-                    vulnerability: 0.9,
+                    activity: 1.9,
+                    vulnerability: 0.7,
                     letality: 0.01,
                 }
             },
@@ -152,17 +152,17 @@ const vue = new Vue({
                 config: {
                     size: 10,
                     activity: 1.1,
-                    vulnerability: 0.9,
-                    letality: 0.01,
+                    vulnerability: 0.8,
+                    letality: 0.02,
                 }
             },
             {
                 label: '41 - 64 Jahre',
                 config: {
-                    size: 10,
-                    activity: 1.1,
+                    size: 30,
+                    activity: 1.0,
                     vulnerability: 0.9,
-                    letality: 0.01,
+                    letality: 0.05,
                 }
             },
             {
