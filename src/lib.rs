@@ -49,14 +49,6 @@ impl Universe {
         let quarantine = Zone {
             x1: 100.0,
             x2: 102.0,
-        /*
-            top_left_corner: Vector {
-                x: 10.0,
-                y: 10.0,
-            },
-            width: 200.0,
-            height: 200.0,
-        */
         };
 
         let mut humans : Vec<Human> = Vec::with_capacity(humans as usize);
@@ -130,27 +122,18 @@ impl Universe {
         let mut q = self.quarantine.clone();
 
         ctx.begin_path();
-        ctx.move_to(q.x1, 0.0);
-        ctx.line_to(q.x1, self.height);
+        ctx.rect(q.x1, 0.0, q.x2-q.x1, self.height);
         ctx.stroke();
-        ctx.move_to(q.x2, 0.0);
-        ctx.line_to(q.x2, self.height);
-        ctx.stroke();
-        //ctx.rect(q.top_left_corner.x, q.top_left_corner.y, q.width, q.height);
 
 
         for human in self.humans.iter() {
             ctx.begin_path();
-           /* if q.inside(human) {
-            ctx.set_fill_style(&mut JsValue::from_str("#00ffff"));
-            } else {*/
             ctx.set_fill_style(&
                 match human.health {
                     Health::Susceptible => JsValue::from_str("#00ff00"),
                     Health::Infected => JsValue::from_str("#ff0000"),
                     Health::Removed => JsValue::from_str("#0000ff")
                 });
-            //}
             ctx
                 .arc(human.pos.x, human.pos.y, human.thickness, 0.0, std::f64::consts::PI * 2.0)
                 .unwrap();
